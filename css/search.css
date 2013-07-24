@@ -1,0 +1,40 @@
+/*Design decoration of control panel*/
+
+/*Font of labels and buttons*/
+h4,.btn{color:#555;}
+#panel{border-right:0px solid silver;}
+/*Decoration of searchfield*/
+#inputword{width:90%;}
+/*Decoration of class and lesson buttons*/
+#lesson label span{vertical-align: bottom;line-height:normal;}
+#lesson label input{vertical-align: top;}
+/*Decoration of courses list buttons for lesson*/
+#course1,#course2,#course3,#course4,#course5,#course6{display:none;}
+/*All other in control panel*/
+#course,#englishalphabet{width:90%;}
+#lesson,#russianalphabet {width:90%;left:-85px;}
+#course ul,#lesson ul,#englishalphabet ul,#russianalphabet ul{list-style:none;clear:both;margin:auto;}
+#course ul li,#lesson ul li,#englishalphabet ul li,#russianalphabet ul li{float:left;padding: 2px;}
+#course ul li a,#lesson ul li a,#englishalphabet ul li a,#russianalphabet ul li a{color:#fff;font-weight:bold;padding: 0;width: 20px;}
+
+/*Design and decoration of blocks on the page*/
+html, body {height: 100%;}
+#main {min-height: 100%;height: auto !important;height: 100%;margin-bottom: -141px;clear:both;}
+/*#header{height:100px;}*/
+#footer{height: 80px;clear: both;}
+#distance{height: 180px;clear: both;}
+#footer{background-color: #F5F5F5; border-top: 1px solid #E5E5E5; padding: 30px 0; text-align: center;}
+
+/*All decorations*/
+#footer p {color: #777777; margin-bottom: 0;}
+caption{background-color:#ddd;}
+
+.hero-unit {
+    color: #5F5F5F;
+    font-size: 18px;
+    line-height: 30px;
+    margin-bottom: 10px;
+    padding: 10px 60px 100px;
+    background-color: #fff;
+    border-radius: 0;
+}
