@@ -8,7 +8,7 @@
 		<script src="js/bootstrap.min.js"></script>
 		<link rel="stylesheet" href="css/bootstrap.min.css" />
 		<link rel="stylesheet" href="css/bootstrap-responsive.min.css" />
-		<link rel="stylesheet" href="css/search.css" />
+		<link rel="stylesheet" href="css/aec.css" />
 		<title>American English Center cheat sheet</title>
 	</head>
 
@@ -108,7 +108,7 @@
 					</div>
 				</div>
 			</div>	
-			<script src="js/search.js"></script>
+			<script src="js/aec.js"></script>
 			<div id="distance"></div>
 		</section>
 			

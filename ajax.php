@@ -73,14 +73,8 @@ class Ajax
 		{
 		try
 			{
-			if($language=='en')
-				{
-				$sql="SELECT `sort_en` AS `answer` FROM `en` WHERE MATCH (`en`) AGAINST (:word IN BOOLEAN MODE);";
-				}
-			else
-				{
-				$sql="SELECT `ru` AS `answer` FROM `ru` WHERE MATCH (`ru`) AGAINST (:word IN BOOLEAN MODE) ORDER BY `ru`;";
-				}
+			$word=str_replace(' ','0',$word);
+			$sql="SELECT DISTINCT SQL_CALC_FOUND_ROWS `converted` FROM `$language` WHERE MATCH(`converted`) AGAINST(:word IN BOOLEAN MODE) ORDER BY `converted` LIMIT 10;";
 			$prepare=$this->dbh->prepare($sql);
 			$prepare->execute(array(':word'=>$word.'*'));
 			$result=$prepare->fetchAll(PDO::FETCH_ASSOC);
@@ -89,15 +83,13 @@ class Ajax
 			{
 			die("Error!: ".$e->getMessage());
 			}
-		$return='';
+		$return=array();
 		if(is_array($result) && count($result)>0)
 			{
 			foreach($result as $row)
 				{
-				$answer[]=$row['answer'];
+				$return[]=str_replace('0',' ',$row['converted']);
 				}
-			$return=array_unique($answer);
-			sort($return);
 			}
 		return json_encode($return);
 		}
@@ -105,14 +97,8 @@ class Ajax
 		{
 		try
 			{
-			if($language=='en')
-				{
-				$sql="SELECT `en_ru`.`course`,`en`.`sort_en`,`en`.`en`,`en_ru`.`lesson`,`ru`.`ru` FROM `en_ru` LEFT JOIN `en` ON (`en`.`id`=`en_ru`.`id_en`) LEFT JOIN `ru` ON (`ru`.`id`=`en_ru`.`id_ru`) WHERE `en`.`sort_en`=:translation ORDER BY `en`.`sort_en`;";
-				}
-			else
-				{
-				$sql="SELECT `en_ru`.`course`,`en`.`sort_en`,`en`.`en`,`en_ru`.`lesson`,`ru`.`ru` FROM `en_ru` LEFT JOIN `en` ON (`en`.`id`=`en_ru`.`id_en`) LEFT JOIN `ru` ON (`ru`.`id`=`en_ru`.`id_ru`) WHERE `ru`.`ru`=:translation ORDER BY `ru`.`ru`;";
-				}
+			$translation=str_replace(' ','0',$translation);
+			$sql="SELECT `en`.`original` AS `en`,`ru`.`original` AS `ru`,`en_ru`.`course`,`en_ru`.`lesson` from `en_ru`,`ru`,`en` where `en_ru`.`en`=`en`.`id` and `en_ru`.`ru`=`ru`.`id` and `$language`.`converted`=:translation ORDER BY `$language`.`converted`;";
 			$prepare=$this->dbh->prepare($sql);
 			$prepare->execute(array(':translation'=>$translation));
 			$result=$prepare->fetchAll(PDO::FETCH_ASSOC);
@@ -121,20 +107,11 @@ class Ajax
 			{
 			die("Error!: ".$e->getMessage());
 			}
+		$output='';
 		if(is_array($result) && count($result)>0)
 			{
 			$tlanguage=($language==='en') ? 'ru' : 'en';
-			$output='<table class="table table-striped table-hover"><caption><h4>'.$translation.'</h4></caption><thead><tr><th>Word</th><th>Translation</th><th>Mention</th><!--<th>Course</th><th>Lesson</th>--></tr></thead><tbody>';
-/*
-
-				foreach($result as $num=>$row)
-					{
-					$output.='<tr><td>'.$row[$language].'</td><td>'.$row[$tlanguage].'</td><!--<td>'.$row['course'].'</td><td>'.$row['lesson'].'</td>--></tr>';
-					}
-
-
-
-*/
+			$output.='<table class="table table-striped table-hover"><caption><h4>'.$translation.'</h4></caption><thead><tr><th>Word</th><th>Translation</th><th>Mention</th></tr></thead><tbody>';
 			if(count($result)==1)
 				{
 				$output.='<tr><td>'.$result[0][$language].'</td><td>'.$result[0][$tlanguage].'</td><td><span class="muted">level '.$result[0]['course'].', lesson '.$result[0]['lesson'].'</span></td></tr>';
@@ -161,11 +138,6 @@ class Ajax
 					$output.=$list_of_int.'</td><td>'.$list_of_lvl.'</td></tr>';
 					}
 				}
-
-
-
-
-
 			$output.='</tbody></table>';
 			}
 		return $output;
@@ -174,16 +146,7 @@ class Ajax
 		{
 		try
 			{
-			if($language=='en')
-				{
-				$sql="SELECT `en_ru`.`course`,`en`.`sort_en`,`en`.`en`,`en_ru`.`lesson`,`ru`.`ru` FROM `en_ru` LEFT JOIN `en` ON (`en`.`id`=`en_ru`.`id_en`) LEFT JOIN `ru` ON (`ru`.`id`=`en_ru`.`id_ru`) WHERE `en`.`fl_en`=:letter ORDER BY `en`.`sort_en`;";
-				}
-			else
-				{
-				$sql="SELECT `en_ru`.`course`,`en`.`sort_en`,`en`.`en`,`en_ru`.`lesson`,`ru`.`ru` FROM `en_ru` LEFT JOIN `en` ON (`en`.`id`=`en_ru`.`id_en`) LEFT JOIN `ru` ON (`ru`.`id`=`en_ru`.`id_ru`) WHERE `ru`.`fl_ru`=:letter ORDER BY `ru`.`ru`;";
-				}
-			//$fl=($language==='en') ? 'fl_en' : 'fl_ru';
-			//$sql="SELECT `en`,`ru`,`course`,`lesson` FROM `vocabulary` WHERE `".$fl."`=:letter ORDER BY `id` ASC;";
+			$sql="SELECT `en`.`original` AS `en`,`ru`.`original` AS `ru`,`en_ru`.`course`,`en_ru`.`lesson` from `en_ru`,`ru`,`en` where `en_ru`.`en`=`en`.`id` and `en_ru`.`ru`=`ru`.`id` and `$language`.`first_letter`=:letter ORDER BY `$language`.`converted`;";
 			$prepare=$this->dbh->prepare($sql);
 			$prepare->execute(array(':letter'=>$letter));
 			$result=$prepare->fetchAll(PDO::FETCH_ASSOC);
@@ -196,12 +159,6 @@ class Ajax
 			{
 			$tlanguage=($language==='en') ? 'ru' : 'en';
 			$output='<table class="table table-striped table-hover"><caption><h4>Letter '.$letter.'</h4></caption><thead><tr><th>Word</th><th>Translation</th><th>Mention</th></tr></thead><tbody>';
-/*			foreach($result as $row)
-				{
-				$output.='<tr><td>'.$row[$language].'</td><td>'.$row[$tlanguage].'</td><td>'.$row['course'].'</td><td>'.$row['lesson'].'</td></tr>';
-				}*/
-
-
 			foreach($result as $row)
 				{
 				$rere[$row[$language]][$row[$tlanguage]][]='level '.$row['course'].', lesson '.$row['lesson'];
@@ -221,8 +178,6 @@ class Ajax
 					}
 				$output.=$list_of_int.'</td><td>'.$list_of_lvl.'</td></tr>';
 				}
-
-
 			$output.='</tbody></table>';
 			}
 		return $output;
@@ -231,7 +186,7 @@ class Ajax
 		{
 		try
 			{
-			$sql="SELECT `en_ru`.`course`,`en`.`sort_en`,`en`.`en`,`en_ru`.`lesson`,`ru`.`ru` FROM `en_ru` LEFT JOIN `en` ON (`en`.`id`=`en_ru`.`id_en`) LEFT JOIN `ru` ON (`ru`.`id`=`en_ru`.`id_ru`) WHERE `en_ru`.`course`=:course ORDER BY `en`.`sort_en`;";
+			$sql="SELECT `en`.`original` AS `en`,`ru`.`original` AS `ru`,`en_ru`.`course`,`en_ru`.`lesson` from `en_ru`,`ru`,`en` where `en_ru`.`en`=`en`.`id` and `en_ru`.`ru`=`ru`.`id` and `en_ru`.`course`=:course ORDER BY `en`.`converted`;";
 			$prepare=$this->dbh->prepare($sql);
 			$prepare->execute(array(':course'=>$course));
 			$result=$prepare->fetchAll(PDO::FETCH_ASSOC);
@@ -243,15 +198,6 @@ class Ajax
 		if(is_array($result) && count($result)>0)
 			{
 			$output='<table class="table table-striped table-hover"><caption><h4>Level '.$course.'</h4></caption><thead><tr><th>Word</th><th>Translation</th><th>Mention</th></tr></thead><tbody>';
-
-
-
-/*			foreach($result as $row)
-				{
-				$output.='<tr><td>'.$row['en'].'</td><td>'.$row['ru'].'</td><td>'.$row['course'].'</td><td>'.$row['lesson'].'</td></tr>';
-				}*/
-
-
 			foreach($result as $row)
 				{
 				$rere[$row['en']][$row['ru']][]='level '.$row['course'].', lesson '.$row['lesson'];
@@ -271,8 +217,6 @@ class Ajax
 					}
 				$output.=$list_of_int.'</td><td>'.$list_of_lvl.'</td></tr>';
 				}
-
-
 			$output.='</tbody></table>';
 			}
 		return $output;
@@ -281,7 +225,7 @@ class Ajax
 		{
 		try
 			{
-			$sql="SELECT `en_ru`.`course`,`en`.`sort_en`,`en`.`en`,`en_ru`.`lesson`,`ru`.`ru` FROM `en_ru` LEFT JOIN `en` ON (`en`.`id`=`en_ru`.`id_en`) LEFT JOIN `ru` ON (`ru`.`id`=`en_ru`.`id_ru`) WHERE `en_ru`.`lesson`=:lesson ORDER BY `en`.`sort_en`;";
+			$sql="SELECT `en`.`original` AS `en`,`ru`.`original` AS `ru`,`en_ru`.`course`,`en_ru`.`lesson` from `en_ru`,`ru`,`en` where `en_ru`.`en`=`en`.`id` and `en_ru`.`ru`=`ru`.`id` and `en_ru`.`lesson`=:lesson ORDER BY `en`.`converted`;";
 			$prepare=$this->dbh->prepare($sql);
 			$prepare->execute(array(':lesson'=>$lesson));
 			$result=$prepare->fetchAll(PDO::FETCH_ASSOC);
@@ -293,16 +237,6 @@ class Ajax
 		if(is_array($result) && count($result)>0)
 			{
 			$output='<table class="table table-striped table-hover"><caption><h4>Lesson '.$lesson.'</h4></caption><thead><tr><th>Word</th><th>Translation</th><th>Mention</th></tr></thead><tbody>';
-
-
-
-/*			foreach($result as $row)
-				{
-				$output.='<tr><td>'.$row['en'].'</td><td>'.$row['ru'].'</td><td>'.$row['course'].'</td><td>'.$row['lesson'].'</td></tr>';
-				}*/
-
-
-
 			foreach($result as $row)
 				{
 				$rere[$row['en']][$row['ru']][]='level '.$row['course'].', lesson '.$row['lesson'];
@@ -322,9 +256,6 @@ class Ajax
 					}
 				$output.=$list_of_int.'</td><td>'.$list_of_lvl.'</td></tr>';
 				}
-
-
-
 			$output.='</tbody></table>';
 			}
 		return $output;

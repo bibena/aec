@@ -2,11 +2,11 @@ $('#inputword').typeahead(
 	{
 	source: function (query, process) 
 		{
-		if(query.match(/^[A-Za-z\W]+$/))
+		if(query.match(/^[A-Za-z\s\`-]+$/))
 			{
 			var language='en';
 			}
-		if(query.match(/^[А-ЯЁа-яё\W]+$/))
+		if(query.match(/^[А-ЯЁа-яё\s-]+$/))
 			{
 			var language='ru';
 			}
@@ -19,15 +19,14 @@ $('#inputword').typeahead(
 					'json'
 					);
 		},
-	items: 10,
 	minLength: 2,
 	updater: function (item)
 		{
-		if(item.match(/^[A-Za-z `\(\)]+.*$/))
+		if(item.match(/^[-A-Za-z\s\`\(\)]+.$/))
 			{
 			var language='en';
 			}
-		if(item.match(/^[А-ЯЁа-яё \(\)]+.*$/))
+		if(item.match(/^[-А-ЯЁа-яё\s\(\)]+.*$/))
 			{
 			var language='ru';
 			}
