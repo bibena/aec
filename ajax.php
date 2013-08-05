@@ -60,7 +60,7 @@ class Ajax
 				}
 			else
 				{
-				throw new Exception("Error!: You didn`t send any request or sent it wrong way");
+				throw new Exception("Error!: You didn`t send any request or sent it wrong");
 				}
 			}
 		catch (Exception $e)
@@ -69,55 +69,14 @@ class Ajax
 			}
 		return $return;
 		}
-	function Word($word,$language)
+	function Format($title,$result,$language='en')
 		{
 		try
 			{
-			$word=str_replace(' ','0',$word);
-			$sql="SELECT DISTINCT SQL_CALC_FOUND_ROWS `converted` FROM `$language` WHERE MATCH(`converted`) AGAINST(:word IN BOOLEAN MODE) ORDER BY `converted` LIMIT 10;";
-			$prepare=$this->dbh->prepare($sql);
-			$prepare->execute(array(':word'=>$word.'*'));
-			$result=$prepare->fetchAll(PDO::FETCH_ASSOC);
-			}
-		catch (PDOException $e)
-			{
-			die("Error!: ".$e->getMessage());
-			}
-		$return=array();
-		if(is_array($result) && count($result)>0)
-			{
-			foreach($result as $row)
+			if(is_array($result) && count($result)>0)
 				{
-				$return[]=str_replace('0',' ',$row['converted']);
-				}
-			}
-		return json_encode($return);
-		}
-	function Translation($translation,$language)
-		{
-		try
-			{
-			$translation=str_replace(' ','0',$translation);
-			$sql="SELECT `en`.`original` AS `en`,`ru`.`original` AS `ru`,`en_ru`.`course`,`en_ru`.`lesson` from `en_ru`,`ru`,`en` where `en_ru`.`en`=`en`.`id` and `en_ru`.`ru`=`ru`.`id` and `$language`.`converted`=:translation ORDER BY `$language`.`converted`;";
-			$prepare=$this->dbh->prepare($sql);
-			$prepare->execute(array(':translation'=>$translation));
-			$result=$prepare->fetchAll(PDO::FETCH_ASSOC);
-			}
-		catch (PDOException $e)
-			{
-			die("Error!: ".$e->getMessage());
-			}
-		$output='';
-		if(is_array($result) && count($result)>0)
-			{
-			$tlanguage=($language==='en') ? 'ru' : 'en';
-			$output.='<table class="table table-striped table-hover"><caption><h4>'.$translation.'</h4></caption><thead><tr><th>Word</th><th>Translation</th><th>Mention</th></tr></thead><tbody>';
-			if(count($result)==1)
-				{
-				$output.='<tr><td>'.$result[0][$language].'</td><td>'.$result[0][$tlanguage].'</td><td><span class="muted">level '.$result[0]['course'].', lesson '.$result[0]['lesson'].'</span></td></tr>';
-				}
-			else
-				{
+				$tlanguage=($language==='en') ? 'ru' : 'en';
+				$output='<table class="table table-striped table-hover"><caption><h4>'.$title. '</h4></caption><thead><tr><th>Word</th><th>Translation</th><th>Mention</th></tr></thead><tbody>';
 				foreach($result as $row)
 					{
 					$rere[$row[$language]][$row[$tlanguage]][]='level '.$row['course'].', lesson '.$row['lesson'];
@@ -133,14 +92,66 @@ class Ajax
 							{
 							$list_of_int.='<p>&nbsp;</p>';
 							}
-						$list_of_lvl.='<p class="muted">'.implode('</p><p class="muted">',$item_tlang).'</p>';
+						$list_of_lvl.='<p class="muted"><nobr>'.implode('</nobr></p><p class="muted"><nobr>',$item_tlang).'</nobr></p>';
 						}
 					$output.=$list_of_int.'</td><td>'.$list_of_lvl.'</td></tr>';
 					}
+				$output.='</tbody></table>';
 				}
-			$output.='</tbody></table>';
+			else
+				{
+				$output='';
+				}
+			}
+		catch (Exception $e)
+			{
+			die("Happen something terrible! But we already solving this issue");
 			}
 		return $output;
+		}
+	function Word($word,$language)
+		{
+		try
+			{
+			$word=str_replace(' ','0',$word);
+			$sql="SELECT DISTINCT SQL_CALC_FOUND_ROWS `converted` FROM `$language` WHERE MATCH(`converted`) AGAINST(:word IN BOOLEAN MODE) ORDER BY `converted` LIMIT 10;";
+			$prepare=$this->dbh->prepare($sql);
+			$prepare->execute(array(':word'=>$word.'*'));
+			$result=$prepare->fetchAll(PDO::FETCH_ASSOC);
+			}
+		catch (PDOException $e)
+			{
+			die("Error!: Wrong part of word requested");
+			}
+		if(is_array($result) && count($result)>0)
+			{
+			foreach($result as $row)
+				{
+				$return[]=str_replace('0',' ',$row['converted']);
+				}
+			}
+		else
+			{
+			$return=array();
+			}
+		return json_encode($return);
+		}
+	function Translation($translation,$language)
+		{
+		try
+			{
+			$translation=str_replace(' ','0',$translation);
+			$sql="SELECT `en`.`original` AS `en`,`ru`.`original` AS `ru`,`en_ru`.`course`,`en_ru`.`lesson` from `en_ru`,`ru`,`en` where `en_ru`.`en`=`en`.`id` and `en_ru`.`ru`=`ru`.`id` and `$language`.`converted`=:translation ORDER BY `$language`.`converted`;";
+			$prepare=$this->dbh->prepare($sql);
+			$prepare->execute(array(':translation'=>$translation));
+			$result=$prepare->fetchAll(PDO::FETCH_ASSOC);
+			}
+		catch (PDOException $e)
+			{
+			die("Error!: Wrong word requested");
+			}
+		$translation=str_replace('0',' ',$translation);
+		return $this->Format($translation,$result,$language);
 		}
 	function Letter($letter,$language)
 		{
@@ -153,34 +164,9 @@ class Ajax
 			}
 		catch (PDOException $e)
 			{
-			die("Error!: ".$e->getMessage());
+			die("Error!: Wrong letter requested");
 			}
-		if(is_array($result) && count($result)>0)
-			{
-			$tlanguage=($language==='en') ? 'ru' : 'en';
-			$output='<table class="table table-striped table-hover"><caption><h4>Letter '.$letter.'</h4></caption><thead><tr><th>Word</th><th>Translation</th><th>Mention</th></tr></thead><tbody>';
-			foreach($result as $row)
-				{
-				$rere[$row[$language]][$row[$tlanguage]][]='level '.$row['course'].', lesson '.$row['lesson'];
-				}
-			foreach($rere as $lang=>$item_lang)
-				{
-				$list_of_int=$list_of_lvl='';
-				$output.='<tr><td>'.$lang.'</td><td>';
-				foreach($item_lang as $tlang=>$item_tlang)
-					{
-					$list_of_int.='<p>'.$tlang.'</p>';
-					for($i=1;$i<count($item_tlang);$i++)
-						{
-						$list_of_int.='<p>&nbsp;</p>';
-						}
-					$list_of_lvl.='<p class="muted"><nobr>'.implode('</nobr></p><p class="muted"><nobr>',$item_tlang).'</nobr></p>';
-					}
-				$output.=$list_of_int.'</td><td>'.$list_of_lvl.'</td></tr>';
-				}
-			$output.='</tbody></table>';
-			}
-		return $output;
+		return $this->Format('Letter '.$letter,$result,$language);
 		}
 	function Course($course)
 		{
@@ -193,33 +179,9 @@ class Ajax
 			}
 		catch (PDOException $e)
 			{
-			die("Error!: ".$e->getMessage());
+			die("Error!: Wrong level requested");
 			}
-		if(is_array($result) && count($result)>0)
-			{
-			$output='<table class="table table-striped table-hover"><caption><h4>Level '.$course.'</h4></caption><thead><tr><th>Word</th><th>Translation</th><th>Mention</th></tr></thead><tbody>';
-			foreach($result as $row)
-				{
-				$rere[$row['en']][$row['ru']][]='level '.$row['course'].', lesson '.$row['lesson'];
-				}
-			foreach($rere as $lang=>$item_lang)
-				{
-				$list_of_int=$list_of_lvl='';
-				$output.='<tr><td>'.$lang.'</td><td>';
-				foreach($item_lang as $tlang=>$item_tlang)
-					{
-					$list_of_int.='<p>'.$tlang.'</p>';
-					for($i=1;$i<count($item_tlang);$i++)
-						{
-						$list_of_int.='<p>&nbsp;</p>';
-						}
-					$list_of_lvl.='<p class="muted"><nobr>'.implode('</nobr></p><p class="muted"><nobr>',$item_tlang).'</nobr></p>';
-					}
-				$output.=$list_of_int.'</td><td>'.$list_of_lvl.'</td></tr>';
-				}
-			$output.='</tbody></table>';
-			}
-		return $output;
+		return $this->Format('Level '.$course,$result);
 		}
 	function Lesson($lesson)
 		{
@@ -232,33 +194,9 @@ class Ajax
 			}
 		catch (PDOException $e)
 			{
-			die("Error!: ".$e->getMessage());
+			die("Error!: Wrong lesson requested");
 			}
-		if(is_array($result) && count($result)>0)
-			{
-			$output='<table class="table table-striped table-hover"><caption><h4>Lesson '.$lesson.'</h4></caption><thead><tr><th>Word</th><th>Translation</th><th>Mention</th></tr></thead><tbody>';
-			foreach($result as $row)
-				{
-				$rere[$row['en']][$row['ru']][]='level '.$row['course'].', lesson '.$row['lesson'];
-				}
-			foreach($rere as $lang=>$item_lang)
-				{
-				$list_of_int=$list_of_lvl='';
-				$output.='<tr><td>'.$lang.'</td><td>';
-				foreach($item_lang as $tlang=>$item_tlang)
-					{
-					$list_of_int.='<p>'.$tlang.'</p>';
-					for($i=1;$i<count($item_tlang);$i++)
-						{
-						$list_of_int.='<p>&nbsp;</p>';
-						}
-					$list_of_lvl.='<p class="muted"><nobr>'.implode('</nobr></p><p class="muted"><nobr>',$item_tlang).'</nobr></p>';
-					}
-				$output.=$list_of_int.'</td><td>'.$list_of_lvl.'</td></tr>';
-				}
-			$output.='</tbody></table>';
-			}
-		return $output;
+		return $this->Format('Lesson '.$lesson,$result);
 		}
 	}
 $ajax=new Ajax;

@@ -2,7 +2,6 @@
 
 /*Font of labels and buttons*/
 h4,.btn{color:#555;}
-#panel{border-right:0px solid silver;}
 /*Decoration of searchfield*/
 #inputword{width:90%;}
 /*Decoration of class and lesson buttons*/
@@ -28,7 +27,7 @@ html, body {height: 100%;}
 /*All decorations*/
 #footer p {color: #777777; margin-bottom: 0;}
 caption{background-color:#ddd;}
-
+.affix{width:270px;}
 .hero-unit {
     color: #5F5F5F;
     font-size: 18px;

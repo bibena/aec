@@ -1,3 +1,7 @@
+if(!$.browser.mobile)
+	{
+	$('#panel').affix();
+	}
 $('#inputword').typeahead(
 	{
 	source: function (query, process) 
