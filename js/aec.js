@@ -1,99 +1,97 @@
-if(!$.browser.mobile)
+$(function()
 	{
-	$('#panel').affix();
-	}
-$('#inputword').typeahead(
-	{
-	source: function (query, process) 
+	$('#inputword').typeahead(
 		{
-		if(query.match(/^[A-Za-z\s\`-]+$/))
+		source: function (query, process) 
 			{
-			var language='en';
-			}
-		if(query.match(/^[А-ЯЁа-яё\s-]+$/))
+			if(query.match(/^[A-Za-z\s\`-]+$/))
+				{
+				var language='en';
+				}
+			if(query.match(/^[А-ЯЁа-яё\s-]+$/))
+				{
+				var language='ru';
+				}
+			return $.post('ajax.php', 
+						{'word':query,'language':language},
+						function (data)
+							{
+							return process(data);
+							},
+						'json'
+						);
+			},
+		minLength: 2,
+		updater: function (item)
 			{
-			var language='ru';
+			if(item.match(/^[-A-Za-z\s\`\(\)]+.$/))
+				{
+				var language='en';
+				}
+			if(item.match(/^[-А-ЯЁа-яё\s\(\)]+.*$/))
+				{
+				var language='ru';
+				}
+			$('#answer').load('ajax.php',
+							{'language':language,'translation':item});		
+			return item;
 			}
-		return $.post('ajax.php', 
-					{'word':query,'language':language},
-					function (data)
-						{
-						return process(data);
-						},
-					'json'
-					);
-		},
-	minLength: 2,
-	updater: function (item)
+		});
+	$('#course a').bind('click',function()
 		{
-		if(item.match(/^[-A-Za-z\s\`\(\)]+.$/))
-			{
-			var language='en';
-			}
-		if(item.match(/^[-А-ЯЁа-яё\s\(\)]+.*$/))
-			{
-			var language='ru';
-			}
+		$('#course').parent().removeClass('open');
 		$('#answer').load('ajax.php',
-						{'language':language,'translation':item});
-		return item;
-		}
-	});
+						{'course':$(this).text()});
+		return false;
+		});
 
-$('#course a').bind('click',function()
-	{
-	$('#course').parent().removeClass('open');
-	$('#answer').load('ajax.php',
-					{'course':$(this).text()});
-	return false;
-	});
-
-$('#lesson').prev().bind('click',function()
-	{
-	$('#lesson div:first-child').css('display','block');
-	for(var i=1;i<=$("#lesson div:first-child ul > li").length;i++)
+	$('#lesson').prev().bind('click',function()
 		{
-		$('#course'+i).hide();
-		}
-	});
+		$('#lesson div:first-child').css('display','block');
+		for(var i=1;i<=$("#lesson div:first-child ul > li").length;i++)
+			{
+			$('#course'+i).hide();
+			}
+		});
 
-$('#lesson div:first-child a').bind('click',function()
-	{
-	$('#lesson div:first-child').css('display','none');
-	for(var i=1;i<=$("#lesson div:first-child ul > li").length;i++)
+	$('#lesson div:first-child a').bind('click',function()
 		{
-		$('#course'+i).hide();
-		}
-	$('#course'+$(this).text()).show();
-	return false;
-	});
+		$('#lesson div:first-child').css('display','none');
+		for(var i=1;i<=$("#lesson div:first-child ul > li").length;i++)
+			{
+			$('#course'+i).hide();
+			}
+		$('#course'+$(this).text()).show();
+		return false;
+		});
 
-$('#course1 a,#course2 a,#course3 a,#course4 a,#course5 a,#course6 a').bind('click',function()
-	{
-	$('#lesson').parent().removeClass('open');
-	if(!$(this).hasClass('disabled'))
+	$('#course1 a,#course2 a,#course3 a,#course4 a,#course5 a,#course6 a').bind('click',function()
 		{
+		$('#lesson').parent().removeClass('open');
+		if(!$(this).hasClass('disabled'))
+			{
+			$('#answer').load('ajax.php',
+							{'lesson':$(this).text()});
+			}
+		return false;
+		});
+
+	$('#englishalphabet a').bind('click',function()
+		{
+		$('#englishalphabet').parent().removeClass('open');
 		$('#answer').load('ajax.php',
-						{'lesson':$(this).text()});
-		}
-	return false;
-	});
+						{'letter':$(this).text(),'language':'en'});
+		return false;
+		});
 
-$('#englishalphabet a').bind('click',function()
-	{
-	$('#englishalphabet').parent().removeClass('open');
-	$('#answer').load('ajax.php',
-					{'letter':$(this).text(),'language':'en'});
-	return false;
-	});
-
-$('#russianalphabet a').bind('click',function()
-	{
-	$('#russianalphabet').parent().removeClass('open');
-	if(!$(this).hasClass('disabled'))
+	$('#russianalphabet a').bind('click',function()
 		{
-		$('#answer').load('ajax.php',
-					{'letter':$(this).text(),'language':'ru'});
-		}
-	return false;
-	});
+		$('#russianalphabet').parent().removeClass('open');
+		if(!$(this).hasClass('disabled'))
+			{
+			$('#answer').load('ajax.php',
+						{'letter':$(this).text(),'language':'ru'});
+			}
+		return false;
+		});
+	})
