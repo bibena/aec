@@ -1,5 +1,13 @@
 $(function()
 	{
+	if(!$.browser.mobile)
+		{
+		$('#panel').affix(
+			{
+			offset: {top: 165}
+			});
+		}
+	
 	$('#inputword').typeahead(
 		{
 		source: function (query, process) 
@@ -32,16 +40,32 @@ $(function()
 				{
 				var language='ru';
 				}
-			$('#answer').load('ajax.php',
-							{'language':language,'translation':item});		
+			$.post( 'ajax.php',
+					{'language':language,'translation':item},
+					function(data)
+						{
+						$('#answer').html(data.table);
+						$('#title').css('display','block');
+						$('#title').html(data.title);
+						},
+					'json'
+					)
 			return item;
 			}
 		});
 	$('#course a').bind('click',function()
 		{
 		$('#course').parent().removeClass('open');
-		$('#answer').load('ajax.php',
-						{'course':$(this).text()});
+		$.post( 'ajax.php',
+				{'course':$(this).text()},
+				function(data)
+					{
+					$('#answer').html(data.table);
+					$('#title').css('display','block');
+					$('#title').html(data.title);
+					},
+				'json'
+				)
 		return false;
 		});
 
@@ -70,8 +94,16 @@ $(function()
 		$('#lesson').parent().removeClass('open');
 		if(!$(this).hasClass('disabled'))
 			{
-			$('#answer').load('ajax.php',
-							{'lesson':$(this).text()});
+			$.post( 'ajax.php',
+					{'lesson':$(this).text()},
+					function(data)
+						{
+						$('#answer').html(data.table);
+						$('#title').css('display','block');
+						$('#title').html(data.title);
+						},
+					'json'
+					)
 			}
 		return false;
 		});
@@ -79,8 +111,16 @@ $(function()
 	$('#englishalphabet a').bind('click',function()
 		{
 		$('#englishalphabet').parent().removeClass('open');
-		$('#answer').load('ajax.php',
-						{'letter':$(this).text(),'language':'en'});
+		$.post( 'ajax.php',
+				{'letter':$(this).text(),'language':'en'},
+				function(data)
+					{
+					$('#answer').html(data.table);
+					$('#title').css('display','block');
+					$('#title').html(data.title);
+					},
+				'json'
+				);
 		return false;
 		});
 
@@ -89,8 +129,16 @@ $(function()
 		$('#russianalphabet').parent().removeClass('open');
 		if(!$(this).hasClass('disabled'))
 			{
-			$('#answer').load('ajax.php',
-						{'letter':$(this).text(),'language':'ru'});
+			$.post( 'ajax.php',
+					{'letter':$(this).text(),'language':'ru'},
+					function(data)
+						{
+						$('#answer').html(data.table);
+						$('#title').css('display','block');
+						$('#title').html(data.title);
+						},
+					'json'
+					);
 			}
 		return false;
 		});

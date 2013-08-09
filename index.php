@@ -8,6 +8,7 @@
 		<script src="js/jquery.min.js"></script>
 		<script src="js/bootstrap3.min.js"></script>
 		<script src="js/typeahead.min.js"></script>
+		<script src="js/detectmobilebrowser.js"></script>
 		<script src="js/aec.js"></script>
 		<link rel="stylesheet" href="css/bootstrap3.min.css" />
 		<link rel="stylesheet" href="css/aec.css" />
@@ -17,8 +18,8 @@
 	<body>
 		<header>
 			<div class="hero-unit">
-				<h1>Hello, world!</h1>
-				<p>This website is dedicated english-russian translator, based on AEC programm. It`s included full vocabulary.</p>
+				<h1 class="text-center">AEC vocabulary</h1>
+				<p class="text-center">This website is dedicated english-russian translator, based on AEC programm and included full vocabulary.</p>
 			</div>		
 		</header>
 		<section id="main" class="container">
@@ -104,10 +105,19 @@
 								</div>
 							</div>
 						</div>
+						<div id="title"></div>
 					</div>
 				</div>
 				<div class="col-8 col-sm-8 col-lg-9" id="content">
-					<div id="answer"></div>
+					<div id="answer">
+						<div id="description">
+							<p><h3>How to use:</h3></p>
+							<p>To translate some word start typing this word in the text field.</p>
+							<p>To display all words from some course or lesson press the corresponding button.</p>
+							<p>To display all words wich start with some letter choose the language and the letter.</p>
+							<p>Good luck!</p>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div id="distance"></div>

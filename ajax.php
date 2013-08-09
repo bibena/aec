@@ -67,7 +67,7 @@ class Ajax
 			{
 			die($e->getMessage());
 			}
-		return $return;
+		return json_encode($return);
 		}
 	function Format($title,$result,$language='en')
 		{
@@ -76,7 +76,7 @@ class Ajax
 			if(is_array($result) && count($result)>0)
 				{
 				$tlanguage=($language==='en') ? 'ru' : 'en';
-				$output='<table class="table table-striped table-hover"><caption><h4>'.$title. '</h4></caption><thead><tr><th>Word</th><th>Translation</th><th>Mention</th></tr></thead><tbody>';
+				$output='<table class="table table-striped table-hover"><!--<caption><h4>'.$title. '</h4></caption><thead><tr><th><p>Word</p></th><th><p>Translation</p></th><th><p>Mention</p></th></tr></thead>--><tbody>';
 				foreach($result as $row)
 					{
 					$rere[$row[$language]][$row[$tlanguage]][]='level '.$row['course'].', lesson '.$row['lesson'];
@@ -84,7 +84,7 @@ class Ajax
 				foreach($rere as $lang=>$item_lang)
 					{
 					$list_of_int=$list_of_lvl='';
-					$output.='<tr><td>'.$lang.'</td><td>';
+					$output.='<tr><td><p>'.$lang.'</p></td><td>';
 					foreach($item_lang as $tlang=>$item_tlang)
 						{
 						$list_of_int.='<p>'.$tlang.'</p>';
@@ -92,7 +92,7 @@ class Ajax
 							{
 							$list_of_int.='<p>&nbsp;</p>';
 							}
-						$list_of_lvl.='<p class="muted"><nobr>'.implode('</nobr></p><p class="muted"><nobr>',$item_tlang).'</nobr></p>';
+						$list_of_lvl.='<p class="text-muted"><nobr>'.implode('</nobr></p><p class="text-muted"><nobr>',$item_tlang).'</nobr></p>';
 						}
 					$output.=$list_of_int.'</td><td>'.$list_of_lvl.'</td></tr>';
 					}
@@ -100,14 +100,14 @@ class Ajax
 				}
 			else
 				{
-				$output='';
+				$output=$title='';
 				}
 			}
 		catch (Exception $e)
 			{
 			die("Happen something terrible! But we already solving this issue");
 			}
-		return $output;
+		return array('table'=>$output,'title'=>'<h4 class="text-center">'.$title.'</h4>');
 		}
 	function Word($word,$language)
 		{
@@ -134,7 +134,7 @@ class Ajax
 			{
 			$return=array();
 			}
-		return json_encode($return);
+		return $return;
 		}
 	function Translation($translation,$language)
 		{
