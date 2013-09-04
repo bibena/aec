@@ -5,28 +5,24 @@ h4,.btn{color:#555;}
 .hero-unit {color: #5F5F5F;font-size: 18px;line-height: 30px;padding: 0 60px;background-color: #fff;border-radius: 0;height:150px;}
 
 #main {min-height: 100%;height: auto !important;height: 100%;margin-bottom: -141px;clear:both;}
-.affix{position:fixed;width:220px;top:10px;}
-.affix-top .typeahead{left:15px !important;}
 .affix-force-top{position:static !important;top:auto !important;bottom:auto !important;}
 
-#panel>div>div{margin-right:6px;}
-#panel>div>div>a.btn{width:90px;}
-#panel>div{margin-bottom:15px;}
-.inputword{width:190px;}
-.typeahead{left:0px !important;width:190px !important;}
+#panel>div>div{width:48.9%;}
+#panel>div>div>a.btn{width:100%;}
+.typeahead{width:87% !important;}
 .active .text-danger{color:#0f0;}
 
 #level1,#level2,#level3,#level4,#level5,#level6{display:none;}
 #level ul,#lesson ul,#englishalphabet ul,#russianalphabet ul{list-style:none;clear:both;margin:auto;padding: 7px;}
 #level ul li,#lesson ul li,#englishalphabet ul li,#russianalphabet ul li{float:left;padding: 2px;}
 #level ul li a,#lesson ul li a,#englishalphabet ul li a,#russianalphabet ul li a{color:#fff;font-weight:bold;padding: 0;width: 20px;}
+#level,#englishalphabet{width:90%;}
 
 #lesson label span{vertical-align: bottom;line-height:normal;}
 #lesson label input{vertical-align: top;}
-#lesson,#russianalphabet {left:-78%;}
+#lesson,#russianalphabet {width:90%;left:-78%;}
 
-#title{margin-top: 50px;width: 190px;background-color: #F5F5F5;border: 1px solid #E5E5E5;border-radius: 15px 15px 15px 15px;padding: 15px 10px;display:none;}
-#title h4{font-size: 18px;}
+#title{display:none !important;}
 
 #answer{margin-top:10px;}
 #description {background-color: #F5F5F5;border: 1px solid #E5E5E5;border-radius: 15px 15px 15px 15px;color: #5F5F5F;font-size: 16px;line-height: 25px;padding: 15px;}

@@ -1,4 +1,4 @@
-aec
+American English Center cheat sheet
 ===
 
-Created by bibena just for fun
+Created by Bibena just for fun.

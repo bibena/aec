@@ -27,6 +27,7 @@ class Ajax
 			die($e->getMessage());
 			}
 		}
+
 	function Execute()
 		{
 		try
@@ -50,9 +51,9 @@ class Ajax
 					throw new Exception("Error!: You didn`t send any request or sent it wrong");
 					}
 				}
-			elseif(isset($_POST['course']) && is_numeric($_POST['course']))
+			elseif(isset($_POST['level']) && is_numeric($_POST['level']))
 				{
-				$return=$this->Course($_POST['course']);
+				$return=$this->Level($_POST['level']);
 				}
 			elseif(isset($_POST['lesson']) && is_numeric($_POST['lesson']))
 				{
@@ -69,46 +70,42 @@ class Ajax
 			}
 		return json_encode($return);
 		}
-	function Format($title,$result,$language='en')
+
+	function Levenshtein($search,$language,$similarity=0.74)
 		{
 		try
 			{
-			if(is_array($result) && count($result)>0)
-				{
-				$tlanguage=($language==='en') ? 'ru' : 'en';
-				$output='<table class="table table-striped table-hover"><!--<caption><h4>'.$title. '</h4></caption><thead><tr><th><p>Word</p></th><th><p>Translation</p></th><th><p>Mention</p></th></tr></thead>--><tbody>';
-				foreach($result as $row)
-					{
-					$rere[$row[$language]][$row[$tlanguage]][]='level '.$row['course'].', lesson '.$row['lesson'];
-					}
-				foreach($rere as $lang=>$item_lang)
-					{
-					$list_of_int=$list_of_lvl='';
-					$output.='<tr><td><p>'.$lang.'</p></td><td>';
-					foreach($item_lang as $tlang=>$item_tlang)
-						{
-						$list_of_int.='<p>'.$tlang.'</p>';
-						for($i=1;$i<count($item_tlang);$i++)
-							{
-							$list_of_int.='<p>&nbsp;</p>';
-							}
-						$list_of_lvl.='<p class="text-muted"><nobr>'.implode('</nobr></p><p class="text-muted"><nobr>',$item_tlang).'</nobr></p>';
-						}
-					$output.=$list_of_int.'</td><td>'.$list_of_lvl.'</td></tr>';
-					}
-				$output.='</tbody></table>';
-				}
-			else
-				{
-				$output=$title='';
-				}
+			$search=str_replace(' ','0',$search);
+			$sql="SELECT DISTINCT `converted` FROM `$language`;";
+			$prepare=$this->dbh->prepare($sql);
+			$prepare->execute();
+			$words=$prepare->fetchAll(PDO::FETCH_NUM);
 			}
-		catch (Exception $e)
+		catch (PDOException $e)
 			{
-			die("Happen something terrible! But we already solving this issue");
+			die("Error!: Wrong part of levenshtein requested");
 			}
-		return array('table'=>$output,'title'=>'<h4 class="text-center">'.$title.'</h4>');
+		if(is_array($words) && count($words)>0)
+			{
+			$type='levinstein';
+			$length=strlen($search);
+			foreach($words as $word)
+				{
+				$levenshtein=levenshtein($search,$word[0]);
+				if($levenshtein>0 && (1-$levenshtein/$length)>$similarity)
+					{
+					$return[]=$word[0];
+					}
+				}
+			$return=array('data'=>$return,'type'=>'levinstein');
+			}
+		else
+			{
+			$return=array('data'=>'');
+			}
+		return $return;
 		}
+
 	function Word($word,$language)
 		{
 		try
@@ -129,13 +126,15 @@ class Ajax
 				{
 				$return[]=str_replace('0',' ',$row['converted']);
 				}
+			$return=array('data'=>$return);
 			}
 		else
 			{
-			$return=array();
+			$return=$this->Levenshtein($word,$language);
 			}
 		return $return;
 		}
+
 	function Translation($translation,$language)
 		{
 		try
@@ -151,8 +150,9 @@ class Ajax
 			die("Error!: Wrong word requested");
 			}
 		$translation=str_replace('0',' ',$translation);
-		return $this->Format($translation,$result,$language);
+		return $result;
 		}
+
 	function Letter($letter,$language)
 		{
 		try
@@ -166,23 +166,25 @@ class Ajax
 			{
 			die("Error!: Wrong letter requested");
 			}
-		return $this->Format('Letter '.$letter,$result,$language);
+		return $result;
 		}
-	function Course($course)
+
+	function Level($level)
 		{
 		try
 			{
-			$sql="SELECT `en`.`original` AS `en`,`ru`.`original` AS `ru`,`en_ru`.`course`,`en_ru`.`lesson` from `en_ru`,`ru`,`en` where `en_ru`.`en`=`en`.`id` and `en_ru`.`ru`=`ru`.`id` and `en_ru`.`course`=:course ORDER BY `en`.`converted`;";
+			$sql="SELECT `en`.`original` AS `en`,`ru`.`original` AS `ru`,`en_ru`.`course`,`en_ru`.`lesson` from `en_ru`,`ru`,`en` where `en_ru`.`en`=`en`.`id` and `en_ru`.`ru`=`ru`.`id` and `en_ru`.`course`=:level ORDER BY `en`.`converted`;";
 			$prepare=$this->dbh->prepare($sql);
-			$prepare->execute(array(':course'=>$course));
+			$prepare->execute(array(':level'=>$level));
 			$result=$prepare->fetchAll(PDO::FETCH_ASSOC);
 			}
 		catch (PDOException $e)
 			{
 			die("Error!: Wrong level requested");
 			}
-		return $this->Format('Level '.$course,$result);
+		return $result;
 		}
+
 	function Lesson($lesson)
 		{
 		try
@@ -196,7 +198,7 @@ class Ajax
 			{
 			die("Error!: Wrong lesson requested");
 			}
-		return $this->Format('Lesson '.$lesson,$result);
+		return $result;
 		}
 	}
 $ajax=new Ajax;
