@@ -11,7 +11,7 @@ include_once('detectmobilebrowser.php');
 		<script src="js/diff_match_patch.js"></script>
 		<script src="js/aec.js"></script>
 		<link rel="stylesheet" href="css/bootstrap.min.css" />
-		<!--<link rel="shortcut icon" href="" />-->
+		<link rel="shortcut icon" href="/aec/favicon.ico" type="image/vnd.microsoft.icon">
 		<?php if($is_mobile):?>
 		<link rel="stylesheet" href="css/aec-mobile.css" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">

@@ -87,6 +87,7 @@ class Ajax
 			}
 		if(is_array($words) && count($words)>0)
 			{
+			$return=array();
 			$type='levinstein';
 			$length=strlen($search);
 			foreach($words as $word)
@@ -101,7 +102,7 @@ class Ajax
 			}
 		else
 			{
-			$return=array('data'=>'');
+			$return=array('data'=>array());
 			}
 		return $return;
 		}
