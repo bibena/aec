@@ -136,7 +136,7 @@ if(preg_match('/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|c
 		</section>
 
 		<footer class="footer">
-			<p>Created by <a href="mailto:admin@bibena.myftp.org">Bibena</a>.</p>
+			<p>Created by <a href="mailto:admin@bibena.com">Bibena</a>.</p>
 			<p>Code licensed under 
 				<noindex><a rel="nofollow" target="_blank" href="http://apache.org/licenses/LICENSE-2.0">Apache License v2.0</a></noindex>.
 			</p>
@@ -144,12 +144,12 @@ if(preg_match('/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|c
 				<noindex><a rel="nofollow" target="_blank" href="http://php.net">PHP</a></noindex>, 
 				<noindex><a rel="nofollow" target="_blank" href="http://jquery.com">jQuery</a></noindex>, 
 				<noindex><a rel="nofollow" target="_blank" href="http://www.w3.org/TR/html51">HTML</a></noindex>, 
-				<noindex><a rel="nofollow" target="_blank" target="_blank" href="http://twitter.github.io/bootstrap">Bootstrap</a></noindex>.
+				<noindex><a rel="nofollow" target="_blank" target="_blank" href="http://getbootstrap.com">Bootstrap</a></noindex>.
 			</p>
 			<p>Host and software provided by: 
 				<noindex><a rel="nofollow" target="_blank" href="http://zyxel.ru/keenetic-giga">Zyxel Keenetic Giga</a></noindex>, 
 				<noindex><a rel="nofollow" target="_blank" href="http://forum.zyxmon.org/forum6-marshrutizatory-zyxel-keenetic.html">Zyxmon forum</a></noindex>, 
-				<noindex><a rel="nofollow" target="_blank" href="http://noip.com/">No-IP</a></noindex>.
+				<noindex><a rel="nofollow" target="_blank" href="http://noip.com">No-IP</a></noindex>.
 			</p>
 		</footer>	
 	</body>

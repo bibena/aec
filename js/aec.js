@@ -19,7 +19,7 @@ function format(result,language)
 				{
 				row2obj[row[language]][row[tlanguage]]=new Array();
 				}
-			row2obj[row[language]][row[tlanguage]].push('level '+row.course+', lesson '+row.lesson);
+			row2obj[row[language]][row[tlanguage]].push('level '+row.level+', lesson '+row.lesson);
 			});
 		for(word in row2obj)
 			{

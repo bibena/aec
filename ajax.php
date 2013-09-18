@@ -5,8 +5,8 @@ class Ajax
 		{
 		try
 			{
-			include_once('setting');
-			if($_SERVER["HTTP_REFERER"]===$config['url'])
+			include_once('config');
+			if(preg_match($config['url'],$_SERVER["HTTP_REFERER"]))
 				{
 				try
 					{
@@ -141,7 +141,7 @@ class Ajax
 		try
 			{
 			$translation=str_replace(' ','0',$translation);
-			$sql="SELECT `en`.`original` AS `en`,`ru`.`original` AS `ru`,`en_ru`.`course`,`en_ru`.`lesson` from `en_ru`,`ru`,`en` where `en_ru`.`en`=`en`.`id` and `en_ru`.`ru`=`ru`.`id` and `$language`.`converted`=:translation ORDER BY `$language`.`converted`;";
+			$sql="SELECT `en`.`original` AS `en`,`ru`.`original` AS `ru`,`en_ru`.`level`,`en_ru`.`lesson` from `en_ru`,`ru`,`en` where `en_ru`.`en`=`en`.`id` and `en_ru`.`ru`=`ru`.`id` and `$language`.`converted`=:translation ORDER BY `$language`.`converted`;";
 			$prepare=$this->dbh->prepare($sql);
 			$prepare->execute(array(':translation'=>$translation));
 			$result=$prepare->fetchAll(PDO::FETCH_ASSOC);
@@ -158,7 +158,7 @@ class Ajax
 		{
 		try
 			{
-			$sql="SELECT `en`.`original` AS `en`,`ru`.`original` AS `ru`,`en_ru`.`course`,`en_ru`.`lesson` from `en_ru`,`ru`,`en` where `en_ru`.`en`=`en`.`id` and `en_ru`.`ru`=`ru`.`id` and `$language`.`first_letter`=:letter ORDER BY `$language`.`converted`;";
+			$sql="SELECT `en`.`original` AS `en`,`ru`.`original` AS `ru`,`en_ru`.`level`,`en_ru`.`lesson` from `en_ru`,`ru`,`en` where `en_ru`.`en`=`en`.`id` and `en_ru`.`ru`=`ru`.`id` and `$language`.`first_letter`=:letter ORDER BY `$language`.`converted`;";
 			$prepare=$this->dbh->prepare($sql);
 			$prepare->execute(array(':letter'=>$letter));
 			$result=$prepare->fetchAll(PDO::FETCH_ASSOC);
@@ -174,7 +174,7 @@ class Ajax
 		{
 		try
 			{
-			$sql="SELECT `en`.`original` AS `en`,`ru`.`original` AS `ru`,`en_ru`.`course`,`en_ru`.`lesson` from `en_ru`,`ru`,`en` where `en_ru`.`en`=`en`.`id` and `en_ru`.`ru`=`ru`.`id` and `en_ru`.`course`=:level ORDER BY `en`.`converted`;";
+			$sql="SELECT `en`.`original` AS `en`,`ru`.`original` AS `ru`,`en_ru`.`level`,`en_ru`.`lesson` from `en_ru`,`ru`,`en` where `en_ru`.`en`=`en`.`id` and `en_ru`.`ru`=`ru`.`id` and `en_ru`.`level`=:level ORDER BY `en`.`converted`;";
 			$prepare=$this->dbh->prepare($sql);
 			$prepare->execute(array(':level'=>$level));
 			$result=$prepare->fetchAll(PDO::FETCH_ASSOC);
@@ -190,7 +190,7 @@ class Ajax
 		{
 		try
 			{
-			$sql="SELECT `en`.`original` AS `en`,`ru`.`original` AS `ru`,`en_ru`.`course`,`en_ru`.`lesson` from `en_ru`,`ru`,`en` where `en_ru`.`en`=`en`.`id` and `en_ru`.`ru`=`ru`.`id` and `en_ru`.`lesson`=:lesson ORDER BY `en`.`converted`;";
+			$sql="SELECT `en`.`original` AS `en`,`ru`.`original` AS `ru`,`en_ru`.`level`,`en_ru`.`lesson` from `en_ru`,`ru`,`en` where `en_ru`.`en`=`en`.`id` and `en_ru`.`ru`=`ru`.`id` and `en_ru`.`lesson`=:lesson ORDER BY `en`.`converted`;";
 			$prepare=$this->dbh->prepare($sql);
 			$prepare->execute(array(':lesson'=>$lesson));
 			$result=$prepare->fetchAll(PDO::FETCH_ASSOC);
