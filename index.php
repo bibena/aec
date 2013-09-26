@@ -31,7 +31,7 @@ if(preg_match('/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|c
 		<header>
 			<div class="hero-unit">
 				<h1 class="text-center">AEC vocabulary</h1>
-				<p class="text-center">This website is dedicated english-russian translator, based on AEC programm and included full vocabulary.</p>
+				<p class="text-center">This website is dedicated english-russian translator, based on AEC program</p>
 			</div>		
 		</header>
 		<section id="main" class="container">
