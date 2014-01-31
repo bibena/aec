@@ -1,1 +1,3 @@
-config
+/config
+/robots.txt
+/.htaccess
